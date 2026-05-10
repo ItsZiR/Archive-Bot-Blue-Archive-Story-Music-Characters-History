@@ -1,0 +1,24 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 虛擬環境
+venv/
+.env/
+env/
+
+# 環境變數
+.env
+
+# IDE 設定
+.vscode/
+.idea/
+
+#Bot Token
+token.json
+
+#Local Tools
+Tool box/
+__template__.py
