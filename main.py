@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import os, json
+import random
 
 class BOT(commands.Bot):
     def __init__(self):
@@ -154,8 +155,24 @@ class BOT(commands.Bot):
     async def on_message(self, message: discord.Message):
         if message.author.bot: return
 
-        if "黑" in message.content or "尼" in message.content:
+        if "黑" in message.content or "尼" in message.content or "嘿" in message.content or "black" in message.content.lower():
+            if "軌" in message.content or "鬼" in message.content or "哥" in message.content:
+                await message.reply("欸 嚴厲斥責一切偏激歧視言論 你發瘋了啊 我再說一次 不管你是同性戀雙性戀紙性戀泛性戀非二元性別變裝皇后等等 只要不違反中華民國法律以及圖奇社群規範 我都支持 好嗎", mention_author=False)
+        elif "內個" in message.content or "內閣" in message.content:
             await message.reply("欸 嚴厲斥責一切偏激歧視言論 你發瘋了啊 我再說一次 不管你是同性戀雙性戀紙性戀泛性戀非二元性別變裝皇后等等 只要不違反中華民國法律以及圖奇社群規範 我都支持 好嗎", mention_author=False)
+
+        if '機率' in message.content:#隨機給機率
+            x = random.randint(1, 100)
+            await message.channel.send('機率為%d%%' % x, mention_author=False)
+        
+        if message.content.startswith('隨機'):#隨機從選項抽出
+            ctx = message.content[3:].split(' ')
+            if len(ctx) < 2:
+                return
+            else:
+                random.shuffle(ctx)
+                numx = random.randint(0, len(ctx)-1)
+                await message.reply(f'隨機 [ {message.content[3:]} ]\n=> {ctx[numx]}')
 
 bot = BOT()
 bot.run(json.load(open("token.json", "r"))["bot_token"])

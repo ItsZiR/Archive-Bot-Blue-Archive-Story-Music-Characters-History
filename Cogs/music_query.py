@@ -175,7 +175,7 @@ class Music_Query(commands.Cog):
     async def ost_composer_tracks_query_autocomplete(
         self,
         interaction: discord.Interaction,
-        current: str
+        current: str #user目前輸入值
     ) -> list[app_commands.Choice[str]]:
         query_sql = ''' 
             SELECT Distinct Composer

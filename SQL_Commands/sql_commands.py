@@ -88,12 +88,12 @@ def story_list_overall_sql(table_name:str):
 
     return story_list_overall
 
-def story_list_type_sql(table_name:str, story_type: str):
-    story_list_type = '''
+def story_list_category_sql(table_name:str, story_type: str):
+    story_list_category = f'''
         SELECT *
-        FROM {}
-        WHERE Type = "{}"
+        FROM {table_name}
+        WHERE Type = "{story_type}"
         ORDER BY Number
-    '''.format(table_name, story_type)
+    '''
     
-    return story_list_type
+    return story_list_category
