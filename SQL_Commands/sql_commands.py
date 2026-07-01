@@ -97,3 +97,13 @@ def story_list_category_sql(table_name:str, story_type: str):
     '''
     
     return story_list_category
+
+def ost_num_random_sql():
+    ost_num_random = '''
+        SELECT *
+        FROM BA_Music
+        WHERE Number IS NOT NULL
+        ORDER BY Number
+    '''
+
+    return ost_num_random

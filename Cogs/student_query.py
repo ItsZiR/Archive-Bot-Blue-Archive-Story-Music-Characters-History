@@ -58,7 +58,7 @@ class Student_Query(commands.Cog):
             school_list.append(data['School'])
             loli_rate.append(round(data['height_U152'] / data['total_students'] * 100, 2))
 
-        image_buf = graphic_tools.create_bar_img(school_list, loli_rate)
+        image_buf = graphic_tools.create_bar_img(school_list, loli_rate, '各校蘿莉佔比')
 
         file = discord.File(image_buf, filename="chart.png")
         embed = discord.Embed(

@@ -1,21 +1,28 @@
 import discord
 import matplotlib.pyplot as plt
-import numpy as np
+from matplotlib import font_manager
 import io
+import os
 
-plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei'] # 設定微軟正黑體
+current_dir = os.path.dirname(__file__)
+font_path = os.path.join(current_dir, 'msjh.ttc') # 設定微軟正黑體
+
+my_font = font_manager.FontProperties(fname=font_path)
+font_manager.fontManager.addfont(font_path)
+
+plt.rcParams['font.sans-serif'] = [my_font.get_name()]
 plt.rcParams['axes.unicode_minus'] = False
 
-def create_bar_img(schools, heights):
+def create_bar_img(schools, heights, title):
     # 建立畫布
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(12, 6))
     
     # 繪製水平長條圖 (y軸是學校, x軸是寬度即身高)
     bars = ax.barh(schools, heights, color='skyblue', align='center')
     
     # 設定標籤與標題
     ax.set_xlabel('比例(%)')
-    ax.set_title('各校蘿莉佔比')
+    ax.set_title(title)
     
     # 反轉 y 軸讓第一筆資料在最上面
     ax.invert_yaxis() 

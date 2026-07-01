@@ -71,7 +71,7 @@ class Music_Query(commands.Cog):
             if track.comment1:
                 embed.description = f"**{track.comment1}**"
 
-            track_data = f"- No. {track.number}, Key: {track.key}, BPM: {track.bpm}, 長度: {track.duration}s"
+            track_data = f"- No. {track.number}, Key: {track.key}, BPM: {track.bpm}, 長度: {track.duration}"
             track_data.join(f"\n作者: {track.composer}\n首次使用日期: {track.released_day}, 首次使用場合: {track.first_use}")
 
             embed.add_field(name="歌曲基本資訊", value=track_data, inline=False)
@@ -195,6 +195,68 @@ class Music_Query(commands.Cog):
         return choice
 
     #------------ 歌曲隨機推播 ------------
+    @app_commands.command(name="ost_num_random", description="隨機推播一首有編號的ost")
+    async def ost_num_random(self, interaction: discord.Interaction):
+        self.cursor.execute(sql_commands.ost_num_random_sql())
+        data = self.cursor.fetchall()
+        random.shuffle(data)
+        result = data[random.randint(0, (len(data)-1))]
+
+        track = models.SoundTrack(
+                file_path = result['File_path'],
+                number = result['Number'],
+                name = result['Name'],
+                key = result['Key'],
+                bpm = result['BPM'],
+                duration = result['Duration'],
+                composer = result['Composer'],
+                type = result['Type'],
+                comment1 = result['Comment1'],
+                comment2 = result['Comment2'],
+                style = result['Style'],
+                genre = result['Genre'],
+                song_type = result['Song_type'],
+                server = result['Server'],
+                released_day = result['Released_day'],
+                first_use = result['First_use'],
+                mtime = result['mtime'],
+                last_sync_time = result['last_sync_time']
+            )
+
+        if not track.name: track.name = "未命名"
+        if not track.composer: track.composer = "未公布"
+
+        embed = discord.Embed(
+            title = (f"隨機歌曲推播 : No. {track.number}, {track.name}"),
+            color = discord.Color.from_str("#00F1FF")
+        )
+        if track.comment1:
+            embed.description = f"**{track.comment1}**"
+
+        track_data = f"- Key: {track.key}, BPM: {track.bpm}, 長度: {track.duration}"
+        track_data.join(f"\n作者: {track.composer}\n首次使用日期: {track.released_day}, 首次使用場合: {track.first_use}")
+
+        embed.add_field(name="歌曲基本資訊", value=track_data, inline=False)
+        embed.add_field(name="歌曲風格:", value=track.style, inline=False)
+
+        if track.first_use:
+            embed.add_field(name="首次使用場合:", value=track.first_use, inline=True)
+
+        embed.add_field(name="首次出現時間:", value=track.released_day, inline=True)
+
+        if track.comment2:
+            embed.add_field(name="", value=(f"{track.comment2}"), inline=False)
+        
+        embed.set_footer(text=f"Developed by ItsZir, via Discord.py")
+
+        await interaction.response.send_message(
+            embed=embed,
+            file=discord.File(
+                track.file_path,
+                filename=f"No. {track.number}, {track.name}.mp3"
+            )
+        )
+
     
 #setup function for each Cog file
 async def setup(bot: commands.Bot):
