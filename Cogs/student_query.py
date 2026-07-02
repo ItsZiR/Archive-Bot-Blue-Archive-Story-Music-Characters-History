@@ -24,6 +24,36 @@ class Student_Query(commands.Cog):
         self.table = "BA_Students"
         self.cursor = self.db.cursor()
     
+    def get_student_model(self, sql_result) -> models.Student:
+        student = models.Student(
+            id = sql_result['id'],
+            path_name = sql_result['PathName'],
+            name = sql_result['Name'],
+            family_name = sql_result['Family_Name'],
+            personal_Name = sql_result['Personal_Name'],
+            age = sql_result['Age'],
+            grade = sql_result['Grade'],
+            school = sql_result['School'],
+            club = sql_result['Club'],
+            height = sql_result['Height'],
+            birthday = sql_result['Birthday'],
+            hobbies = sql_result['Hobbies'],
+            profile = sql_result['Profile'],
+            rarity = sql_result['Rarity'],
+            voice_actress = sql_result['Voice_Actress'],
+            illustrator = sql_result['Illustrator'],
+            designer = sql_result['Designer'],
+
+            isDefault = sql_result['isDefault'],
+            size = sql_result['Size'],
+            memorial_lobby_track = sql_result['Memorial_Lobby_Track'],
+            released_day = sql_result['Released_day'],
+            type = sql_result['Type'],
+            unique_item = sql_result['Unique_Item'],
+        )
+
+        return student
+
     @app_commands.command(name="stu_count", description="目前實裝的學生數量")
     #@app_commands.describe()
     async def stu_count(self, interaction: discord.Interaction):
