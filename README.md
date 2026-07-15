@@ -46,3 +46,5 @@
 >   - 同時新增Inner Class來支援PageView翻頁功能
 > - sql_commands.py建立get_sql_cmd方法，以後逐步改成以尋找.sql檔案的方式來執行command
 > - 預計下版本建立分支，獨立一個版本給樹莓派運行，並為效能關係限制其音樂模組功能
+>   - ver. 1.2.0.1: 關閉RPi_env - music_query的歌曲隨機推播, 歌曲查詢時附帶的mp3檔, 猜OST小遊戲之功能
+>   - 之後將建立聊天紀錄log及分析功能，並在該版本及環境上運行，資料庫將加密

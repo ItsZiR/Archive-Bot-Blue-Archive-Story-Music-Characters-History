@@ -85,7 +85,7 @@ class BOT(commands.Bot):
             color=discord.Color.from_str("#00F1FF")
         )
 
-        embed.set_footer(text="Developed by ItsZir, via Discord.py / win.")
+        embed.set_footer(text="Developed by ItsZir, via Discord.py / rpi.")
     
         await interaction.response.send_message(embed=embed, ephemeral=True)
 

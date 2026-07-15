@@ -97,11 +97,7 @@ class Music_Query(commands.Cog):
             embed.set_footer(text=f"Developed by ItsZir, via Discord.py")
 
             await interaction.followup.send(
-                embed=embed,
-                file=discord.File(
-                    track.file_path,
-                    filename=f"No. {track.number}, {track.name}.mp3"
-                )
+                embed=embed
             )
 
     #------------ 用作者查詢 ------------
@@ -185,120 +181,6 @@ class Music_Query(commands.Cog):
         ]
 
         return choice
-
-    #------------ 歌曲隨機推播 ------------
-    @app_commands.command(name="ost_num_random", description="隨機推播一首有編號的OST")
-    async def ost_num_random(self, interaction: discord.Interaction):
-        await interaction.response.defer()
-
-        self.cursor.execute(sql_commands.ost_num_random_sql())
-        data = self.cursor.fetchall()
-        random.shuffle(data)
-        result = data[random.randint(0, (len(data)-1))]
-
-        track : models.SoundTrack = self.get_track_model(result)
-
-        if not track.name: track.name = "未命名"
-        if not track.composer: track.composer = "未公布"
-
-        embed = discord.Embed(
-            title = (f"隨機歌曲推播 : No. {track.number}, {track.name}"),
-            color = discord.Color.from_str("#00F1FF")
-        )
-        if track.comment1:
-            embed.description = f"**{track.comment1}**"
-
-        track_data = f"- Key: {track.key}, BPM: {track.bpm}, 長度: {track.duration}"
-        track_data.join(f"\n作者: {track.composer}\n首次使用日期: {track.released_day}, 首次使用場合: {track.first_use}")
-
-        embed.add_field(name="歌曲基本資訊", value=track_data, inline=False)
-        embed.add_field(name="歌曲風格:", value=track.style, inline=False)
-
-        if track.first_use:
-            embed.add_field(name="首次使用場合:", value=track.first_use, inline=True)
-
-        embed.add_field(name="首次出現時間:", value=track.released_day, inline=True)
-
-        if track.comment2:
-            embed.add_field(name="", value=(f"{track.comment2}"), inline=False)
-        
-        embed.set_footer(text=f"Developed by ItsZir, via Discord.py")
-
-        await interaction.followup.send(
-            embed=embed,
-            file=discord.File(
-                track.file_path,
-                filename=f"No. {track.number}, {track.name}.mp3"
-            )
-        )
-
-    #------------ 猜OST小遊戲 ------------
-    @app_commands.command(name="guess_ost_game", description="隨機猜OST的小遊戲")
-    async def guess_ost_game(self, interaction: discord.Interaction):
-        #偵測當前頻道有無進行中的遊戲
-        current_channel_id = interaction.channel_id
-        if current_channel_id in self.channels_in_game:
-            await interaction.response.send_message("當前頻道已有進行中的遊戲。", ephemeral=True)
-            return
-        else:
-            self.channels_in_game.add(current_channel_id)
-        
-        #隨機抽選ost
-        #------
-        self.cursor.execute(sql_commands.ost_num_random_sql())
-        data = self.cursor.fetchall()
-        random.shuffle(data)
-        result = data[random.randint(0, (len(data)-1))]
-
-        track : models.SoundTrack = self.get_track_model(result)
-        answer : int = track.number
-        #------
-
-        #遊戲資訊
-        GAME_TIMEOUT_SECONDS = 30.0
-        start_time = time.time()
-
-        #使用command後傳送mp3跟訊息
-        await interaction.response.send_message(
-            content="猜猜以下ost的編號, 限制時間: 30秒",
-            file=discord.File(
-                track.file_path,
-                filename="Blue Archive OST.mp3"
-            )
-        )
-        print(answer)
-
-        #給bot.wait_for來做確認的check function, 過濾掉其他頻道傳送的跟bot的訊息
-        def check_msg(msg: discord.Message):
-            return (
-                (not msg.author.bot)
-                and (msg.channel == interaction.channel)
-            )
-        try:
-            #在時間內重複做判斷
-            while True:
-                elapsed_time = time.time() - start_time #計算遊戲開始後, 當下過了幾秒
-                remaining_time = GAME_TIMEOUT_SECONDS - elapsed_time #計算離遊戲結束還剩下幾秒
-
-                try:
-                    #偵測用戶輸入
-                    msg = await self.bot.wait_for('message', check=check_msg, timeout=remaining_time)
-                    
-                    #移除多餘空格並判斷是否為數字, 否則跳過本次判斷
-                    cleaned_msg = msg.content.replace(" ", "")
-                    if not cleaned_msg.isdigit(): continue
-
-                    #答案正確
-                    elif int(cleaned_msg) == answer:
-                        await interaction.followup.send(f"🎉 正確！{interaction.user.mention}")
-                        break
-                
-                #前面msg在timeout時的動作, 結束遊戲
-                except asyncio.TimeoutError:
-                    await interaction.followup.send(f"⏰ 時間到！正確答案是 **No. {answer}**！！！")
-                    break
-        finally:
-            self.channels_in_game.discard(current_channel_id) #不論遊戲結果都釋放當前頻道id
     
 #setup function for each Cog file
 async def setup(bot: commands.Bot):
