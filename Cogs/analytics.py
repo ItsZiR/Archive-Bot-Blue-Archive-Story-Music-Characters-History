@@ -23,8 +23,8 @@ class Analytics(commands.Cog):
     def __init__(self, bot:commands.Bot):
         self.bot = bot
 
-        self.db = sqlite3.connect("Bot_DB.db")
-        self.db.row_factory = sqlite3.Row #可直接讀取column的名稱
+        #self.db = sqlite3.connect("Bot_DB.db")
+        #self.db.row_factory = sqlite3.Row #可直接讀取column的名稱
 
     class Analytics_PageView(graphic_tools.PageView):
         def __init__(self, pages, topic, exe_time):
