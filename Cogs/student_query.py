@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 import sqlite3
 import sys, os
+from datetime import datetime
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
@@ -24,6 +25,35 @@ class Student_Query(commands.Cog):
         self.table = "BA_Students"
         self.cursor = self.db.cursor()
     
+    class StudentPageView(graphic_tools.PageView):
+        def __init__(self, pages, topic):
+            super().__init__(pages)
+            self.pages = pages #表示分頁方式
+            self.current = 0 #目前頁碼
+            self.prev.disabled = True
+            self.next.disabled = len(pages) <= 1
+            self.topic = topic
+
+        def make_embed(self):
+            embed = discord.Embed(
+                title = self.topic,
+                description=f"第 {self.current+1} / {len(self.pages)} 頁",
+                color=discord.Color.from_str("#00F1FF")
+            )
+            for data in self.pages[self.current]:
+                date_diff = datetime.today() - datetime.strptime(data["Released_day"], '%Y-%m-%d')
+                title = f"{data["Personal_Name"]} - {date_diff.days}天"
+                fmt = data["Released_day"]
+
+                embed.add_field(
+                    name=title,
+                    value=fmt,
+                    inline=True
+                )
+
+            embed.set_footer(text="Developed by ItsZir, via Discord.py")
+            return embed
+
     def get_student_model(self, sql_result) -> models.Student:
         student = models.Student(
             id = sql_result['id'],
@@ -98,6 +128,23 @@ class Student_Query(commands.Cog):
         embed.set_image(url="attachment://chart.png")
 
         await interaction.followup.send(embed=embed, file=file)
+
+    @app_commands.command(name="stu_default_list", description="目前沒有新衣裝的學生列表")
+    async def stu_default_list(self, interaction: discord.Interaction):
+        self.cursor.execute(sql_commands.get_sql_cmd('stu_default_list.sql'))
+        stu_list = self.cursor.fetchall()
+
+        per_page = 15 # 切頁
+        pages = []
+        for i in range(0, len(stu_list), per_page):
+            pages.append(stu_list[i:i+per_page])
+        
+        if not pages:
+            await interaction.response.send_message("沒有資料")
+            return
+        
+        view = self.StudentPageView(pages, topic=f"目前尚無新衣裝的學生: {len(stu_list)}位")
+        await interaction.response.send_message(embed=view.make_embed(), view=view)
 
 #setup function for each Cog file
 async def setup(bot: commands.Bot):

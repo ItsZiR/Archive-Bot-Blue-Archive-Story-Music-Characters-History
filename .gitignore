@@ -22,3 +22,4 @@ token.json
 #Local Tools
 Tool box/
 __template__.py
+__analytics_exp___.py

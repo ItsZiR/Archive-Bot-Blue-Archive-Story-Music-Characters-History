@@ -33,7 +33,6 @@ class General(commands.Cog):
     #------------ Slash Commands ------------
     
     @app_commands.command(name="greeting", description="打招呼")
-    #@app_commands.describe(name="你想對誰打招呼？")
     async def greeting(self, interaction: discord.Interaction):
         await interaction.response.send_message(f"{interaction.user.mention}！Ciallo～(∠・ω< )⌒★")
 

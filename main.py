@@ -9,6 +9,7 @@ class BOT(commands.Bot):
         #設定 Bot 的權限(Intents)
         intents = discord.Intents.default()
         intents.message_content = True
+        intents.members = True
         super().__init__(command_prefix="~", intents=intents)
 
     async def setup_hook(self):
@@ -83,6 +84,8 @@ class BOT(commands.Bot):
             description = format,
             color=discord.Color.from_str("#00F1FF")
         )
+
+        embed.set_footer(text="Developed by ItsZir, via Discord.py / win.")
     
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -158,11 +161,11 @@ class BOT(commands.Bot):
         if "黑" in message.content or "尼" in message.content or "嘿" in message.content or "black" in message.content.lower():
             if "軌" in message.content or "鬼" in message.content or "哥" in message.content:
                 await message.reply("欸 嚴厲斥責一切偏激歧視言論 你發瘋了啊 我再說一次 不管你是同性戀雙性戀紙性戀泛性戀非二元性別變裝皇后等等 只要不違反中華民國法律以及圖奇社群規範 我都支持 好嗎", mention_author=False)
-        elif "內個" in message.content or "內閣" in message.content:
+        elif "內個" in message.content:
             await message.reply("欸 嚴厲斥責一切偏激歧視言論 你發瘋了啊 我再說一次 不管你是同性戀雙性戀紙性戀泛性戀非二元性別變裝皇后等等 只要不違反中華民國法律以及圖奇社群規範 我都支持 好嗎", mention_author=False)
 
         if '機率' in message.content:#隨機給機率
-            x = random.randint(1, 100)
+            x = random.randint(0, 100)
             await message.channel.send('機率為%d%%' % x, mention_author=False)
         
         if message.content.startswith('隨機'):#隨機從選項抽出

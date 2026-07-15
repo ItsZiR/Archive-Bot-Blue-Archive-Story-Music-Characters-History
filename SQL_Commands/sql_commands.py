@@ -1,3 +1,15 @@
+import os
+
+def get_sql_cmd(sql_file_name: str) -> str:
+    base_dir = os.path.dirname(__file__)
+    
+    sql_path = os.path.join(base_dir, 'sql_files', sql_file_name)
+    
+    with open(sql_path, 'r', encoding='utf-8') as f:
+        sql_cmd = f.read()
+        
+    return sql_cmd
+
 #------------ 資料表欄位相關更新 ------------
 def ost_num_query_sql(table_name:str, num:int):
     ost_num_query = '''
